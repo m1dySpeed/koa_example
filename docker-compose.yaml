@@ -1,0 +1,34 @@
+services:
+  database:
+    image: postgres
+    container_name: postgres
+    env_file:
+      - ./.env
+    environment:
+      POSTGRES_DB: ${DATABASE_NAME}
+      POSTGRES_USER: ${DATABASE_USER}
+      POSTGRES_PASSWORD: ${DATABASE_PASSWORD}
+    ports:
+      - 5432:5432
+    networks:
+      - app-net
+  app:
+    container_name: webApp
+    env_file:
+      - ./.env
+    environment:
+      DATABASE_NAME: ${DATABASE_NAME}
+      DATABASE_USER: ${DATABASE_USER}
+      DATABASE_PASSWORD: ${DATABASE_PASSWORD}
+      DATABASE_HOST: ${DATABASE_HOST}
+      DATABASE_PORT: ${DATABASE_PORT}
+    ports:
+      - ${HTTP_PORT}:${HTTP_PORT}
+    networks:
+      - app-net
+    build:
+      dockerfile: Dockerfile
+    depends_on:
+      - database
+networks:
+  app-net:
